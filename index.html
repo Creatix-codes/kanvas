@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#35c46b">
+<title>Kanvas — Think. Draw. Create.</title>
+<meta name="description" content="Kanvas — Think. Draw. Create. A fast, lightweight whiteboard for drawing shapes, adding arrows, importing images, and saving your work in the browser.">
+<link rel="icon" type="image/png" href="favicon.png" sizes="any">
+<link rel="apple-touch-icon" href="favicon.png">
+
+<link rel="preload" href="assets/fonts/FactorA-Extrabold.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="assets/fonts/DMSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Fredoka-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Caveat-Variable.woff2" as="font" type="font/woff2" crossorigin>
+
+<script>document.documentElement.className+=" js";</script>
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}.loader{display:none!important}.ch>i{transform:none!important}</style></noscript>
+
+<link rel="stylesheet" href="vendor/phosphor/style.min.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/docs.css">
+<link rel="stylesheet" href="css/board.css">
+</head>
+
+<body data-route="home" data-loading="true">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- ═══════════════ LOADER ═══════════════ -->
+<div class="loader" id="loader" role="status" aria-label="Opening Kanvas">
+  <div class="loader__grid" aria-hidden="true"></div>
+  <div class="loader__stage">
+    <div class="loader__mark">
+      <img src="assets/logo.png" alt="" width="154" height="154">
+    </div>
+    <div class="loader__word" aria-hidden="true">
+      <span>K</span><span>A</span><span>N</span><span>V</span><span>A</span><span>S</span>
+    </div>
+    <div class="loader__track">
+      <span class="loader__fill" id="loaderFill"></span>
+      <span class="loader__nib" id="loaderNib"><i class="ph ph-pencil-simple-line"></i></span>
+    </div>
+    <div class="loader__meta">
+      <span class="loader__pct" id="loaderPct">0</span>
+      <span class="loader__hint">Think. Draw. Create.</span>
+    </div>
+  </div>
+  <div class="loader__wipe loader__wipe--top" aria-hidden="true"></div>
+  <div class="loader__wipe loader__wipe--bottom" aria-hidden="true"></div>
+</div>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#top" id="brandLink" aria-label="Kanvas home">
+      <span class="brand__mark"><img src="assets/logo.png" alt="" width="34" height="34"></span>
+      <span class="brand__word" aria-hidden="true"><span>K</span><span>A</span><span>N</span><span>V</span><span>A</span><span>S</span></span>
+    </a>
+
+    <div class="nav__chip" aria-hidden="true">
+      <span class="nav__chip-inner" id="navChip">Think. Draw. Create.</span>
+    </div>
+
+    <div class="nav__actions">
+      <a class="pill pill--grass" href="#/board">START DRAWING</a>
+      <button class="pill pill--ink menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="menu-btn__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="menu-btn__label">MENU</span>
+      </button>
+    </div>
+  </div>
+  <div class="nav__rail" aria-hidden="true"><span id="navProgress"></span></div>
+</header>
+
+<!-- ═══════════════ FULLSCREEN MENU ═══════════════ -->
+<div class="menu" id="menu" hidden>
+  <div class="menu__sheet">
+    <div class="menu__head">
+      <span class="menu__eyebrow">Navigate</span>
+      <button class="pill pill--paper menu__close" id="menuClose" type="button" aria-label="Close menu">
+        <i class="ph ph-x" aria-hidden="true"></i> CLOSE
+      </button>
+    </div>
+    <div class="menu__body">
+      <nav class="menu__nav" aria-label="Primary navigation">
+        <a class="menu__link" href="#features" data-menu-link><span class="menu__idx">01</span><span class="menu__label" data-split>FEATURES</span><i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+        <a class="menu__link" href="#about" data-menu-link><span class="menu__idx">02</span><span class="menu__label" data-split>ABOUT</span><i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+        <a class="menu__link" href="#/docs" data-menu-link><span class="menu__idx">03</span><span class="menu__label" data-split>DOCS</span><i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+        <a class="menu__link" href="#contact" data-menu-link><span class="menu__idx">04</span><span class="menu__label" data-split>CONTACT</span><i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+      </nav>
+      <aside class="menu__aside">
+        <div class="menu__doodle" aria-hidden="true">
+          <svg viewBox="0 0 220 160" fill="none">
+            <rect x="14" y="26" width="86" height="58" rx="10" stroke="currentColor" stroke-width="4"/>
+            <path d="M34 56h46M34 68h30" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="150" cy="52" r="26" stroke="currentColor" stroke-width="4"/>
+            <path d="M104 60c14 6 20 4 24-4" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+            <path d="M40 118c26-14 60-16 92-4 18 7 34 8 50 2" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+            <path d="M176 124l10-10-4-12" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M56 96l6 14 8-11 8 13 7-10" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="menu__tag">A simple whiteboard for ideas, sketches, notes, and everything in between.</p>
+        <div class="menu__quick">
+          <a href="#/board">Open the whiteboard</a>
+          <a href="#/docs">Read the documentation</a>
+        </div>
+      </aside>
+    </div>
+    <div class="menu__foot">
+      <span>Kanvas — Think. Draw. Create.</span>
+      <span class="menu__foot-keys">Press <kbd>Esc</kbd> to close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ VIEW: HOME ═══════════════ -->
+<main id="main-content">
+<div class="view" id="view-home">
+
+  <!-- ─────── HERO ─────── -->
+  <section class="hero" id="top" data-chip="Think. Draw. Create.">
+    <div class="hero__dots" aria-hidden="true"></div>
+
+    <div class="hero__float hero__float--a" aria-hidden="true">
+      <div class="chip-card">
+        <span class="chip-card__tag">STEP 01</span>
+        <svg viewBox="0 0 220 130" class="sketch">
+          <rect class="draw" x="18" y="24" width="84" height="56" rx="8"/>
+          <circle class="draw" cx="164" cy="46" r="30"/>
+          <path class="draw" d="M106 52h26" stroke-dasharray="6 9"/>
+          <path class="draw" d="M40 100h130" />
+          <path class="draw" d="M52 116h74"/>
+        </svg>
+      </div>
+    </div>
+    <div class="hero__float hero__float--b" aria-hidden="true">
+      <div class="chip-card chip-card--sun">
+        <span class="chip-card__tag">ZOOM 128%</span>
+        <svg viewBox="0 0 200 120" class="sketch">
+          <path class="draw" d="M20 96c30-52 58-70 92-52 22 12 42 8 66-24"/>
+          <circle class="draw" cx="112" cy="44" r="6"/>
+          <path class="draw" d="M28 20v14M21 27h14"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="shell hero__inner">
+      <p class="hero__intro" data-reveal>A simple whiteboard for ideas, sketches,<br>notes, and everything in between.</p>
+
+      <h1 class="hero__title" id="hero-title">
+        <span class="hero__line">
+          <span class="hero__w" data-split>THINK</span>
+          <span class="hero__bulb"><img src="assets/doodles/bulb.png" alt="" width="154" height="103"></span>
+          <span class="hero__w" data-split>FREELY</span>
+        </span>
+        <span class="hero__line hero__line--two">
+          <span class="hero__w" data-split>DRAW LIMITLESS.</span>
+        </span>
+      </h1>
+
+      <img class="hero__underline" src="assets/doodles/hero-double-underline.svg" alt="" aria-hidden="true">
+      <img class="hero__arrow" src="assets/doodles/hero-cta-arrow.svg" alt="" aria-hidden="true">
+
+      <div class="hero__cta" data-reveal>
+        <a class="btn btn--grass" href="#/board" data-magnet>START DRAWING <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <a class="btn btn--ghost" href="#/docs" data-magnet>SEE THE DOCS</a>
+      </div>
+    </div>
+
+    <a class="hero__cue" href="#features" aria-label="Scroll to features">
+      <span>SCROLL</span><i class="ph ph-arrow-down" aria-hidden="true"></i>
+    </a>
+  </section>
+
+  <!-- ─────── PROBLEM ─────── -->
+  <section class="problem" id="features" data-chip="Features">
+    <div class="shell">
+      <div class="problem__head">
+        <h2 class="problem__title">
+          <span class="l" data-split>A BLANK</span>
+          <span class="l" data-split>CANVAS IS</span>
+          <span class="l" data-split>GREAT</span> <span class="sticker">BUT</span>
+        </h2>
+        <svg class="problem__squiggle" viewBox="0 0 220 90" fill="none" aria-hidden="true">
+          <path class="draw" d="M12 70c40-46 74-58 104-40 22 13 44 11 66-14" />
+          <path class="draw" d="M172 18l14-6-2 16" />
+        </svg>
+      </div>
+
+      <ul class="problem__grid">
+        <li class="pcard" data-reveal>
+          <h3>DRAW IT YOUR WAY<span>Shapes, lines, arrows &amp; freehand.</span></h3>
+          <span class="pcard__doodle" aria-hidden="true">
+            <svg viewBox="0 0 120 96" fill="none">
+              <rect class="draw" x="14" y="16" width="72" height="48" rx="6"/>
+              <path class="draw" d="M28 76h64"/>
+              <path class="draw" d="M62 40l22-18 12 14"/>
+              <circle class="draw" cx="94" cy="26" r="7"/>
+            </svg>
+          </span>
+        </li>
+        <li class="pcard" data-reveal>
+          <h3>MAKE IT YOURS<span>Colors, borders &amp; backgrounds.</span></h3>
+          <span class="pcard__doodle" aria-hidden="true">
+            <svg viewBox="0 0 120 96" fill="none">
+              <path class="draw" d="M24 66c-10-14 2-30 18-26 4-16 28-20 36-6 16-4 28 10 22 24"/>
+              <path class="draw" d="M30 74h60"/>
+              <path class="draw" d="M44 52h30M44 62h18"/>
+            </svg>
+          </span>
+        </li>
+        <li class="pcard" data-reveal>
+          <h3>MOVE FREELY<span>Zoom and pan around your canvas.</span></h3>
+          <span class="pcard__doodle" aria-hidden="true">
+            <svg viewBox="0 0 120 96" fill="none">
+              <rect class="draw" x="18" y="22" width="84" height="54" rx="8"/>
+              <path class="draw" d="M46 44l-12 8 12 8"/>
+              <path class="draw" d="M74 44l12 8-12 8"/>
+              <path class="draw" d="M60 40v24"/>
+            </svg>
+          </span>
+        </li>
+        <li class="pcard" data-reveal>
+          <h3>MAKE IT CLEAR<span>Text, pointers &amp; laser.</span></h3>
+          <span class="pcard__doodle" aria-hidden="true">
+            <svg viewBox="0 0 120 96" fill="none">
+              <circle class="draw" cx="54" cy="42" r="24"/>
+              <path class="draw" d="M72 60l22 22"/>
+              <path class="draw" d="M44 42h20M54 32v20"/>
+            </svg>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────── ABOUT ─────── -->
+  <section class="about" id="about" data-chip="About">
+    <div class="shell">
+      <p class="about__kicker" data-reveal><span>that's where</span></p>
+      <h2 class="about__title">
+        <span class="about__brand" data-split>KANVAS</span>
+        <span class="about__mark"><span>comes in</span></span>
+      </h2>
+
+      <div class="about__demo" data-reveal>
+        <div class="demo" id="demoBoard">
+          <div class="demo__bar">
+            <span class="demo__dot"></span><span class="demo__dot"></span><span class="demo__dot"></span>
+            <span class="demo__file" id="demoFile">Untitled board</span>
+            <span class="demo__saved" id="demoSaved">Saved locally</span>
+          </div>
+          <div class="demo__body">
+            <div class="demo__tools" id="demoTools" role="toolbar" aria-label="Drawing tools"></div>
+            <div class="demo__stage" id="demoStage">
+              <canvas id="demoCanvas"></canvas>
+              <p class="demo__hint" id="demoHint">Draw here — pick a tool, drag to create.</p>
+            </div>
+            <div class="demo__panel" id="demoPanel">
+              <span class="demo__label">STYLE</span>
+              <div class="demo__swatches" id="demoSwatches"></div>
+              <span class="demo__label">STROKE</span>
+              <div class="demo__widths" id="demoWidths"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="about__cards">
+        <li class="fcard" data-reveal><span class="fcard__num">01</span><h3>Draw anything</h3><p>Shapes, arrows, lines and freehand strokes.</p></li>
+        <li class="fcard" data-reveal><span class="fcard__num">02</span><h3>Style in a click</h3><p>Colors, strokes, fills and opacity.</p></li>
+        <li class="fcard" data-reveal><span class="fcard__num">03</span><h3>Move freely</h3><p>Zoom and pan across an infinite canvas.</p></li>
+        <li class="fcard" data-reveal><span class="fcard__num">04</span><h3>Export anywhere</h3><p>PNG, JPG, PDF, SVG or JSON.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────── JOURNEY (pinned horizontal) ─────── -->
+  <section class="journey" id="journey" data-chip="The journey">
+    <div class="journey__pin">
+      <div class="journey__head shell">
+        <span class="journey__eyebrow">Every creation follows a journey</span>
+        <h2 class="journey__title">FROM IDEA <span class="marker">to</span> CANVAS</h2>
+      </div>
+      <div class="journey__viewport">
+        <ol class="journey__track" id="journeyTrack">
+          <li class="jstep"><span class="jstep__num">01</span><h3>Create</h3><p>Pick a tool and draw your first shape on the canvas.</p></li>
+          <li class="jstep"><span class="jstep__num">02</span><h3>Edit</h3><p>Select, move, resize and arrange shapes on the infinite canvas.</p></li>
+          <li class="jstep"><span class="jstep__num">03</span><h3>Style</h3><p>Apply colors, strokes, fills and opacity from the Style panel.</p></li>
+          <li class="jstep"><span class="jstep__num">04</span><h3>Connect</h3><p>Draw arrows between shapes to show relationships and flow.</p></li>
+          <li class="jstep"><span class="jstep__num">05</span><h3>Export</h3><p>Download your board as PNG, JPG, PDF, or share a JSON file.</p></li>
+        </ol>
+      </div>
+      <div class="journey__meter" aria-hidden="true"><span id="journeyMeter"></span></div>
+    </div>
+  </section>
+
+  <!-- ─────── SHOWCASE ─────── -->
+  <section class="showcase" id="work" data-chip="Showcase">
+    <div class="shell">
+      <div class="showcase__head">
+        <h2 class="showcase__title"><span data-split>WHAT YOU</span><br><span data-split>CAN MAKE</span></h2>
+        <p class="showcase__lead">Real boards people build with Kanvas — from quick sketches to polished diagrams.</p>
+      </div>
+      <div class="showcase__grid" id="showcaseGrid"></div>
+    </div>
+  </section>
+
+  <!-- ─────── MARQUEE (single) ─────── -->
+  <section class="strip" aria-hidden="true">
+    <div class="strip__track" id="stripTrack">
+      <span>THINK</span><i class="ph ph-star-four"></i><span>DRAW</span><i class="ph ph-star-four"></i><span>CREATE</span><i class="ph ph-star-four"></i>
+      <span>THINK</span><i class="ph ph-star-four"></i><span>DRAW</span><i class="ph ph-star-four"></i><span>CREATE</span><i class="ph ph-star-four"></i>
+      <span>THINK</span><i class="ph ph-star-four"></i><span>DRAW</span><i class="ph ph-star-four"></i><span>CREATE</span><i class="ph ph-star-four"></i>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════ VIEW: DOCS ═══════════════ -->
+<div class="view" id="view-docs" hidden>
+  <div class="docs" id="docsRoot">
+    <header class="docs__hero" id="docs">
+      <div class="shell">
+        <span class="docs__eyebrow">DOCUMENTATION</span>
+        <h1 class="docs__title"><span data-split>Learn Kanvas</span></h1>
+        <p class="docs__sub">Everything you need to know to start creating.</p>
+        <p class="docs__desc">Explore Kanvas tools and features and learn how to create, draw, design, organize, and export your ideas.</p>
+        <label class="docs__search">
+          <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+          <span class="sr-only">Find a section</span>
+          <input type="search" id="docsSearch" placeholder="Find a section" autocomplete="off">
+        </label>
+      </div>
+    </header>
+
+    <div class="docs__layout shell">
+      <aside class="docs__sidebar" id="docsSidebar" aria-label="Documentation navigation"></aside>
+      <main class="docs__content" id="docsContent"></main>
+      <aside class="docs__toc" id="docsToc" aria-label="On this page"></aside>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ VIEW: BOARD ═══════════════ -->
+<div class="view" id="view-board" hidden>
+  <div class="board" id="boardRoot"></div>
+</div>
+</main>
+
+<!-- ═══════════════ SHARED CTA + FOOTER ═══════════════ -->
+<section class="cta" id="contact" data-chip="Contact">
+  <div class="shell cta__inner">
+    <h2 class="cta__title"><span data-split>Ready to create?</span></h2>
+    <p class="cta__desc">Open Kanvas and start turning your ideas into something visual.</p>
+    <a class="btn btn--ink btn--lg" href="#/board" data-magnet>START DRAWING <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+    <svg class="cta__doodle" viewBox="0 0 240 120" fill="none" aria-hidden="true">
+      <path class="draw" d="M16 100c46-64 96-84 150-58"/>
+      <path class="draw" d="M156 34l16 8-14 12"/>
+    </svg>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="shell foot__inner">
+    <div class="foot__brand">
+      <a class="brand brand--foot" href="#top" aria-label="Kanvas home">
+        <span class="brand__mark"><img src="assets/logo.png" alt="" width="34" height="34"></span>
+        <span class="brand__word" aria-hidden="true"><span>K</span><span>A</span><span>N</span><span>V</span><span>A</span><span>S</span></span>
+      </a>
+      <p class="foot__tag">Kanvas — Think. Draw. Create.</p>
+    </div>
+    <nav class="foot__nav" aria-label="Footer">
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#/docs">Documentation</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <p class="foot__note">A simple whiteboard for ideas, sketches, notes, and everything in between.</p>
+  </div>
+  <div class="shell foot__bottom">
+    <span>© <span id="year">2026</span> Kanvas</span>
+    <a href="#top">Back to top <i class="ph ph-arrow-up" aria-hidden="true"></i></a>
+  </div>
+</footer>
+
+<!-- ═══════════════ COOKIE CONSENT ═══════════════ -->
+<div class="cookie" id="cookieBar" hidden>
+  <p>We use cookies to improve your experience and support analytics &amp; marketing.</p>
+  <div class="cookie__actions">
+    <button type="button" class="pill pill--grass" data-cookie="accept">Accept All</button>
+    <button type="button" class="pill pill--ghost" data-cookie="reject">Reject</button>
+    <button type="button" class="pill pill--ghost" data-cookie="manage">Manage Preferences</button>
+  </div>
+</div>
+
+<div class="prefs" id="prefsOverlay" hidden>
+  <div class="prefs__panel" role="dialog" aria-modal="true" aria-labelledby="prefsTitle">
+    <h3 id="prefsTitle">Cookie Preferences</h3>
+    <label class="prefs__item"><input type="checkbox" checked disabled><span><strong>Essential</strong>Required for the website to function properly.</span></label>
+    <label class="prefs__item"><input type="checkbox" data-pref="analytics"><span><strong>Analytics</strong>Help us understand how visitors interact with the website.</span></label>
+    <label class="prefs__item"><input type="checkbox" data-pref="marketing"><span><strong>Marketing</strong>Used to deliver personalized advertisements.</span></label>
+    <div class="prefs__actions">
+      <button type="button" class="pill pill--ghost" data-pref-cancel>Cancel</button>
+      <button type="button" class="pill pill--grass" data-pref-save>Save Preferences</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCROLL PEN RAIL ═══════════════ -->
+<svg class="rail" id="rail" viewBox="0 0 40 600" fill="none" aria-hidden="true" preserveAspectRatio="none">
+  <path id="railPath" d="M20 8C6 78 34 132 18 196S34 300 20 364 34 470 18 530s6 54 4 62"
+        stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <path id="railNib" d="M0 0l9 3-6 4-3-7z" fill="currentColor"/>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script src="js/split.js"></script>
+<script src="js/data/docs.js"></script>
+<script src="js/diagram.js"></script>
+<script src="js/core.js"></script>
+<script src="js/mini-board.js"></script>
+<script src="js/docs.js"></script>
+<script src="js/showcase.js"></script>
+<script src="js/app.js"></script>
+<script src="js/board.js"></script>
+</body>
+</html>
